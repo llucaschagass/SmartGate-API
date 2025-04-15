@@ -1,30 +1,29 @@
+const authService = require("../services/auth.service");
+
 const AuthController = {
-    register: async (req, res) => {
-      try {
-        // Implementar lógica de registro de usuário
-        res.status(201).json({ message: "Usuário registrado com sucesso!" });
-      } catch (error) {
-        res.status(500).json({ error: "Erro ao registrar usuário" });
-      }
-    },
-  
-    login: async (req, res) => {
-      try {
-        // Implementar lógica de login e geração de token JWT
-        res.status(200).json({ message: "Login realizado com sucesso!", token: "fake-jwt-token" });
-      } catch (error) {
-        res.status(500).json({ error: "Erro ao realizar login" });
-      }
-    },
-  
-    getProfile: async (req, res) => {
-      try {
-        // Implementar lógica para retornar dados do usuário autenticado
-        res.status(200).json({ user: "dados-do-usuario" });
-      } catch (error) {
-        res.status(500).json({ error: "Erro ao buscar perfil" });
-      }
+  register: async (req, res) => {
+    try {
+      const { nomeusuario, senha } = req.body;
+      await authService.registrar({ nomeusuario, senha });
+      res.status(201).json({ message: "Usuário registrado com sucesso!" });
+    } catch (error) {
+      res.status(400).json({ error: error.message || "Erro ao registrar usuário" });
     }
-  };
-  
-  module.exports = AuthController;
+  },
+
+  login: async (req, res) => {
+    try {
+      const { nomeusuario, senha } = req.body;
+      const { token, usuario } = await authService.autenticar({ nomeusuario, senha });
+      res.status(200).json({
+        message: "Login realizado com sucesso!",
+        token,
+        usuario: { id: usuario.codigousuario, nome: usuario.nomeusuario },
+      });
+    } catch (error) {
+      res.status(401).json({ error: error.message || "Erro ao realizar login" });
+    }
+  },
+};
+
+module.exports = AuthController;

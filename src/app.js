@@ -14,7 +14,13 @@ app.use(cors());
 const swaggerDocument = yaml.load(path.join(__dirname, "app/docs/swagger.yaml"));
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// Routes
-app.use("/api/auth", require("./app/routes/auth.routes"));
+// Rotas
+const authRoutes = require("./app/routes/auth.routes");
+const movimentacaoRoutes = require("./app/routes/movimentacao.routes");
+const veiculoRoutes = require("./app/routes/veiculo.routes");
+
+app.use("/api/auth", authRoutes);
+app.use("/api/movimentacoes", movimentacaoRoutes);
+app.use("/api/veiculos", veiculoRoutes);
 
 module.exports = app;
