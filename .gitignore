@@ -1,1 +1,5 @@
+# Node Modules
 node_modules/
+
+# Banco de dados SQLite
+database/database.sqlite
