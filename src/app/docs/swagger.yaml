@@ -1,0 +1,186 @@
+openapi: 3.0.0
+info:
+  title: SmartGate API
+  version: 1.0.0
+  description: API para controle de movimentação de veículos e autenticação de usuários.
+
+tags:
+  - name: Auth
+    description: Endpoints de autenticação
+  - name: Veiculo
+    description: Endpoints relacionados aos veículos
+  - name: Movimentacao
+    description: Endpoints de entrada e saída de veículos
+
+paths:
+  /api/auth/logon:
+    post:
+      tags:
+        - Auth
+      summary: Cadastro de usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nomeusuario:
+                  type: string
+                senha:
+                  type: string
+      responses:
+        '201':
+          description: Usuário cadastrado com sucesso
+        '400':
+          description: Dados inválidos
+
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login do usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nomeusuario:
+                  type: string
+                senha:
+                  type: string
+      responses:
+        '200':
+          description: Login realizado com sucesso
+        '401':
+          description: Credenciais inválidas
+
+  /api/veiculos:
+    get:
+      tags:
+        - Veiculo
+      summary: Listar todos os veículos
+      responses:
+        '200':
+          description: Lista de veículos retornada com sucesso
+    post:
+      tags:
+        - Veiculo
+      summary: Cadastrar novo veículo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                placa:
+                  type: string
+                chassi:
+                  type: string
+                renavam:
+                  type: string
+                autorizado:
+                  type: string
+      responses:
+        '201':
+          description: Veículo cadastrado com sucesso
+        '400':
+          description: Dados inválidos
+
+  /api/veiculos/placa/{placa}:
+    get:
+      tags:
+        - Veiculo
+      summary: Buscar veículo por placa
+      parameters:
+        - in: path
+          name: placa
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Veículo encontrado
+        '404':
+          description: Veículo não encontrado
+
+  /api/veiculos/{id}/autorizacao:
+    patch:
+      tags:
+        - Veiculo
+      summary: Atualizar autorização do veículo
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                autorizado:
+                  type: string
+      responses:
+        '200':
+          description: Autorização atualizada
+        '404':
+          description: Veículo não encontrado
+
+  /api/movimentacoes:
+    get:
+      tags:
+        - Movimentacao
+      summary: Listar todas as movimentações
+      responses:
+        '200':
+          description: Lista de movimentações retornada com sucesso
+    post:
+      tags:
+        - Movimentacao
+      summary: Criar nova movimentação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tipo:
+                  type: string
+                placa:
+                  type: string
+                data:
+                  type: string
+                  format: date-time
+      responses:
+        '201':
+          description: Movimentação registrada
+        '400':
+          description: Dados inválidos
+
+  /api/movimentacoes/periodo:
+    get:
+      tags:
+        - Movimentacao
+      summary: Listar movimentações por período (usando query params)
+      parameters:
+        - in: query
+          name: inicio
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: fim
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Lista de movimentações filtradas
